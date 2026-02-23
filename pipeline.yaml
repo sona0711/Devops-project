@@ -1,0 +1,25 @@
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: nodejs-pipeline
+spec:
+  tasks:
+    - name: install-dependencies
+      taskRef:
+        name: npm-install-task
+
+    - name: run-tests
+      taskRef:
+        name: jasmine-test-task
+      runAfter:
+        - install-dependencies
+
+    - name: build-app
+      taskSpec:
+        steps:
+          - name: build
+            image: node:16
+            script: |
+              echo "Building application..."
+      runAfter:
+        - run-tests
